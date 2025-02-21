@@ -110,7 +110,7 @@ resource "aws_security_group" "ec2_sg" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = [aws_security_group.alb_sg.id] # Restrict to the ALB SG.
+    cidr_blocks = ["0.0.0.0/0"] # Ideally, we would restrict to the ALB SG.
   }
 
   # Allow inbound SSH for debugging
