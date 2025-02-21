@@ -275,7 +275,7 @@ data "template_file" "userdata" {
     [Service]
     # Construct the DB_DSN string using Terraform references
     # e.g. "myuser:mypass@tcp(mydb.xxxx.us-west-2.rds.amazonaws.com:3306)/mydemodb"
-    Environment="DB_DSN=${var.db_username}:${var.db_password}@tcp(${aws_db_instance.mysql_demo.address}:3306)/${aws_db_instance.mysql_demo.name}"
+    Environment="DB_DSN=${var.db_username}:${var.db_password}@tcp(${aws_db_instance.mysql_demo.address}:3306)/${aws_db_instance.mysql_demo.db_name}"
     EOT
 
     systemctl daemon-reload
