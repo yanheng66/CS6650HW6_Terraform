@@ -17,7 +17,7 @@ packer init .
 packer validate ami.pkr.hcl
 packer build ami.pkr.hcl
 ```
-Once successfully, You can navigate to AMI to confirm. You will the pre-baked AMI ID.
+Once success, You can navigate to AMI to confirm. You will need the pre-baked AMI ID next.
 
 ### Run Terraform
 
