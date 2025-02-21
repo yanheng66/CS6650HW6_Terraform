@@ -21,7 +21,7 @@ Once success, You can navigate to AMI to confirm. You will need the pre-baked AM
 
 ### Run Terraform
 
-Update the default value of ```ami_id``` to your pre-baked AMI ID and save.
+Update the default value of ```ami_id``` in main.tf to your pre-baked AMI ID and save.
 
 ```console
 terraform init
