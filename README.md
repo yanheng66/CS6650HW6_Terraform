@@ -13,19 +13,21 @@ cd into the repo folder
 
 ### Install Packer and Terraform
 
-Install [Packer](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli) on Amazon Linux
-    ```console
-        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-        sudo apt-get update && sudo apt-get install packer
-    ```
+Install [Packer](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli) on Amazon Linux  
+
+```
+    sudo yum install -y yum-utils
+    sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+    sudo yum -y install packer
+```
 
 Install [Terraform](https://aws-quickstart.github.io/workshop-terraform-modules/40_setup_cloud9_ide/42_install_terraform_c9.html) 
-    ```console
-        wget https://releases.hashicorp.com/terraform/0.15.1/terraform_0.15.1_linux_amd64.zip
-        unzip terraform_0.15.1_linux_amd64.zip
-        sudo mv terraform /usr/local/bin
-    ```
+
+```
+    wget https://releases.hashicorp.com/terraform/0.15.1/terraform_0.15.1_linux_amd64.zip
+    unzip terraform_0.15.1_linux_amd64.zip
+    sudo mv terraform /usr/local/bin
+```
 ### Build the AMI
 ```console
 packer init .
