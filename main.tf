@@ -182,7 +182,7 @@ resource "aws_db_instance" "mysql_demo" {
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   skip_final_snapshot    = true
   deletion_protection    = false
-  publicly_accessible    = true # For demo; typically false in production
+  publicly_accessible    = false
 
   tags = {
     Name = "demo-mysql-db"
