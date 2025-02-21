@@ -4,6 +4,7 @@
 Make sure you are in us-west-2 Oregon.
 Create a Cloud9 environment.
 Clone this repo to Cloud9.
+cd into the repo folder
 
 ### Install Packer and Terraform
 
