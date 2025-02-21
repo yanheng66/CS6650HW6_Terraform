@@ -29,7 +29,7 @@ terraform init
 terraform validate
 terraform apply
 ```
-Optionaly, run ```terraform plan``` to verify execution plan.
+Enter 'yes' to continue
 
 ### Test
 With your Load Balancer address, use Postman to send Get and Post requests to your server.
