@@ -2,7 +2,7 @@
 # Provider
 ############
 provider "aws" {
-  region  = "us-west-2"  # or any preferred region
+  region = "us-west-2" # or any preferred region
   # If Cloud9 is already set up with an IAM role that allows provisioning,
   # you likely don't need explicit access/secret keys. 
   # Otherwise, you can specify or set environment variables.
@@ -24,7 +24,7 @@ variable "db_password" {
 }
 
 variable "ami_id" {
-  type = string
+  type    = string
   default = "ami-08e4e35cccc6189f4"
 }
 ############
@@ -47,7 +47,7 @@ resource "aws_internet_gateway" "igw" {
 # Subnet A (us-west-2a)
 resource "aws_subnet" "demo_subnet_a" {
   vpc_id                  = aws_vpc.demo_vpc.id
-  cidr_block             = "10.0.1.0/24"
+  cidr_block              = "10.0.1.0/24"
   availability_zone       = "us-west-2a"
   map_public_ip_on_launch = true
   tags = {
@@ -63,7 +63,7 @@ resource "aws_route_table_association" "assoc_a" {
 # Subnet B (us-west-2b)
 resource "aws_subnet" "demo_subnet_b" {
   vpc_id                  = aws_vpc.demo_vpc.id
-  cidr_block             = "10.0.2.0/24"
+  cidr_block              = "10.0.2.0/24"
   availability_zone       = "us-west-2b"
   map_public_ip_on_launch = true
   tags = {
@@ -100,28 +100,28 @@ resource "aws_security_group" "ec2_sg" {
 
   # Allow inbound HTTP from ALB (or all for quick testing).
   ingress {
-    description      = "HTTP from ALB"
-    from_port        = 8080
-    to_port          = 8080
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]  # For demo. In production, restrict to the ALB SG.
+    description = "HTTP from ALB"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # For demo. In production, restrict to the ALB SG.
   }
 
   # Allow inbound SSH for debugging
   ingress {
-    description      = "SSH"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   # Outbound to anywhere
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -136,11 +136,11 @@ resource "aws_security_group" "rds_sg" {
   vpc_id      = aws_vpc.demo_vpc.id
 
   ingress {
-    description            = "MySQL access from ec2_sg"
-    from_port              = 3306
-    to_port                = 3306
-    protocol               = "tcp"
-    security_groups        = [aws_security_group.ec2_sg.id]
+    description     = "MySQL access from ec2_sg"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ec2_sg.id]
   }
 
   egress {
@@ -159,7 +159,7 @@ resource "aws_security_group" "rds_sg" {
 # RDS MySQL
 ############
 resource "aws_db_subnet_group" "db_subnet_group" {
-  name       = "demo-db-subnet-group"
+  name = "demo-db-subnet-group"
   subnet_ids = [
     aws_subnet.demo_subnet_a.id,
     aws_subnet.demo_subnet_b.id
@@ -173,16 +173,16 @@ resource "aws_db_instance" "mysql_demo" {
   identifier             = "demo-mysql"
   engine                 = "mysql"
   engine_version         = "8.0"
-  instance_class         = "db.t3.micro"    # For demo
+  instance_class         = "db.t3.micro" # For demo
   allocated_storage      = 20
-  db_name                = "mydemodb"       # DB name
+  db_name                = "mydemodb" # DB name
   username               = var.db_username
   password               = var.db_password
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   skip_final_snapshot    = true
   deletion_protection    = false
-  publicly_accessible    = true  # For demo; typically false in production
+  publicly_accessible    = true # For demo; typically false in production
 
   tags = {
     Name = "demo-mysql-db"
@@ -195,9 +195,13 @@ resource "aws_db_instance" "mysql_demo" {
 resource "aws_lb" "demo_alb" {
   name               = "demo-alb"
   load_balancer_type = "application"
-  subnets            = [aws_subnet.demo_subnet.id]
-  security_groups    = [aws_security_group.ec2_sg.id]  # For inbound rules, or a separate ALB SG
-  ip_address_type    = "ipv4"
+  # Provide subnets in at least two AZs
+  subnets = [
+    aws_subnet.demo_subnet_a.id,
+    aws_subnet.demo_subnet_b.id
+  ]
+  security_groups = [aws_security_group.ec2_sg.id] # For inbound rules, or a separate ALB SG
+  ip_address_type = "ipv4"
 
   tags = {
     Name = "demo-alb"
@@ -211,14 +215,14 @@ resource "aws_lb_target_group" "demo_tg" {
   vpc_id      = aws_vpc.demo_vpc.id
   target_type = "instance"
   health_check {
-    port               = "traffic-port"
-    protocol           = "HTTP"
-    path               = "/count"    # The Go app route used for health checks
-    matcher            = "200-399"
-    healthy_threshold  = 2
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    path                = "/count" # The Go app route used for health checks
+    matcher             = "200-399"
+    healthy_threshold   = 2
     unhealthy_threshold = 2
-    timeout            = 5
-    interval           = 30
+    timeout             = 5
+    interval            = 30
   }
 
   tags = {
@@ -250,34 +254,34 @@ resource "aws_lb_listener" "demo_http_listener" {
 # 2. Clones a public repo with your demo Go app
 # 3. Builds and runs the server
 data "template_file" "userdata" {
-#   template = <<-EOF
-#     #!/bin/bash
-#     yum update -y
-#     yum install -y git
+  #   template = <<-EOF
+  #     #!/bin/bash
+  #     yum update -y
+  #     yum install -y git
 
-#     # Install Go (example version 1.20.x)
-#     wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
-#     tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
-#     echo "export PATH=\$PATH:/usr/local/go/bin" >> /etc/profile
-#     source /etc/profile
+  #     # Install Go (example version 1.20.x)
+  #     wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
+  #     tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
+  #     echo "export PATH=\$PATH:/usr/local/go/bin" >> /etc/profile
+  #     source /etc/profile
 
-#     # optional: create a non-root user
-#     # useradd -m demo
-#     # su - demo
+  #     # optional: create a non-root user
+  #     # useradd -m demo
+  #     # su - demo
 
-#     # Git clone your Go server
-#     cd /root
-#     git clone https://github.com/<YOUR-ORG>/<YOUR-GO-REPO>.git go-server
-#     cd go-server
+  #     # Git clone your Go server
+  #     cd /root
+  #     git clone https://github.com/<YOUR-ORG>/<YOUR-GO-REPO>.git go-server
+  #     cd go-server
 
-#     # set DB_DSN environment variable for MySQL
-#     echo "export DB_DSN=\"${DB_DSN}\"" >> /etc/profile
-#     source /etc/profile
+  #     # set DB_DSN environment variable for MySQL
+  #     echo "export DB_DSN=\"${DB_DSN}\"" >> /etc/profile
+  #     source /etc/profile
 
-#     # build and run (in background)
-#     /usr/local/go/bin/go build -o demo-server main.go
-#     nohup ./demo-server > /var/log/demo-server.log 2>&1 &
-#     EOF
+  #     # build and run (in background)
+  #     /usr/local/go/bin/go build -o demo-server main.go
+  #     nohup ./demo-server > /var/log/demo-server.log 2>&1 &
+  #     EOF
 
   vars = {
     DB_DSN = "${var.db_username}:${var.db_password}@tcp(${aws_db_instance.mysql_demo.address}:3306)/mydemodb"
@@ -286,7 +290,7 @@ data "template_file" "userdata" {
 
 resource "aws_launch_template" "demo_lt" {
   name_prefix   = "demo-lt-"
-  image_id      = var.ami_id  # Example Amazon Linux 2 in us-west-2. Update for your region
+  image_id      = var.ami_id # Example Amazon Linux 2 in us-west-2. Update for your region
   instance_type = "t3.micro"
 
   user_data = base64encode(data.template_file.userdata.rendered)
@@ -302,23 +306,26 @@ resource "aws_launch_template" "demo_lt" {
 }
 
 resource "aws_autoscaling_group" "demo_asg" {
-  name                = "demo-asg"
-  max_size            = 3
-  min_size            = 1
-  desired_capacity    = 2
+  name             = "demo-asg"
+  max_size         = 3
+  min_size         = 1
+  desired_capacity = 2
   launch_template {
     id      = aws_launch_template.demo_lt.id
     version = "$Latest"
   }
-  vpc_zone_identifier = [aws_subnet.demo_subnet.id]
+  vpc_zone_identifier = [
+    aws_subnet.demo_subnet_a.id,
+    aws_subnet.demo_subnet_b.id
+  ]
 
   target_group_arns = [aws_lb_target_group.demo_tg.arn]
 
   tag {
-      key                 = "Name"
-      value               = "demo-ec2"
-      propagate_at_launch = true
-    }
+    key                 = "Name"
+    value               = "demo-ec2"
+    propagate_at_launch = true
+  }
 
   lifecycle {
     create_before_destroy = true
