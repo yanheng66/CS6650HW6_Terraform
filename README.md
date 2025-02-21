@@ -1,13 +1,41 @@
 # CS6650HW6_Terraform
 
-## Install Packer and Terraform
+### Start
+Make sure you are in us-west-2 Oregon.
+Create a Cloud9 environment.
+Clone this repo to Cloud9.
 
+### Install Packer and Terraform
 
+Install [Packer](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli) on Amazon Linux
 
-## Build the AMI
+Install [Terraform](https://aws-quickstart.github.io/workshop-terraform-modules/40_setup_cloud9_ide/42_install_terraform_c9.html) 
+
+### Build the AMI
 ```console
 packer init .
-packer validate packer.json
-packer build packer.json
+packer validate ami.pkr.hcl
+packer build ami.pkr.hcl
 ```
-Remember the pre-baked AMI for later use.
+Once successfully, You can navigate to AMI to confirm. You will the pre-baked AMI ID.
+
+### Run Terraform
+
+Update the default value of ```ami_id``` to your pre-baked AMI ID and save.
+
+```console
+terraform init
+terraform validate
+terraform apply
+```
+Optionaly, run ```terraform plan``` to verify execution plan.
+
+### Clean Up
+
+```console
+terraform destroy
+```
+
+
+### Author
+Ruidi Huang
