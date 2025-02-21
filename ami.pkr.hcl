@@ -16,7 +16,7 @@ source "amazon-ebs" "go_app_with_cloudwatch" {
   # We'll use a filter to pick the latest Amazon Linux 2 AMI
   source_ami_filter {
     filters = {
-      name                = "amzn2-ami-kernel-*-x86_64"
+      name                = "amzn2-ami-hvm-2.0.*-x86_64-gp2"
       "virtualization-type" = "hvm"
       "root-device-type"    = "ebs"
     }
