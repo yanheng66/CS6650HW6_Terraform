@@ -44,14 +44,36 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_subnet" "demo_subnet" {
+# Subnet A (us-west-2a)
+resource "aws_subnet" "demo_subnet_a" {
   vpc_id                  = aws_vpc.demo_vpc.id
   cidr_block             = "10.0.1.0/24"
+  availability_zone       = "us-west-2a"
   map_public_ip_on_launch = true
-  availability_zone       = "us-west-2a"  # pick an AZ in your region
   tags = {
-    Name = "demo-subnet"
+    Name = "demo-subnet-a"
   }
+}
+
+resource "aws_route_table_association" "assoc_a" {
+  subnet_id      = aws_subnet.demo_subnet_a.id
+  route_table_id = aws_route_table.demo_route_table.id
+}
+
+# Subnet B (us-west-2b)
+resource "aws_subnet" "demo_subnet_b" {
+  vpc_id                  = aws_vpc.demo_vpc.id
+  cidr_block             = "10.0.2.0/24"
+  availability_zone       = "us-west-2b"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "demo-subnet-b"
+  }
+}
+
+resource "aws_route_table_association" "assoc_b" {
+  subnet_id      = aws_subnet.demo_subnet_b.id
+  route_table_id = aws_route_table.demo_route_table.id
 }
 
 resource "aws_route_table" "demo_route_table" {
@@ -65,11 +87,6 @@ resource "aws_route" "demo_route" {
   route_table_id         = aws_route_table.demo_route_table.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.igw.id
-}
-
-resource "aws_route_table_association" "demo_rta" {
-  subnet_id      = aws_subnet.demo_subnet.id
-  route_table_id = aws_route_table.demo_route_table.id
 }
 
 ############
@@ -143,7 +160,10 @@ resource "aws_security_group" "rds_sg" {
 ############
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "demo-db-subnet-group"
-  subnet_ids = [aws_subnet.demo_subnet.id]
+  subnet_ids = [
+    aws_subnet.demo_subnet_a.id,
+    aws_subnet.demo_subnet_b.id
+  ]
   tags = {
     Name = "demo-db-subnet-group"
   }
