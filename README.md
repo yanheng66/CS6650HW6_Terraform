@@ -65,7 +65,7 @@ http://ENTER.ALB.DNS.NAME/insert
 terraform destroy
 ```
 
-Enter 'yes' to confirm
+Enter 'yes' to confirm. If it fails, try again.
 
 ### Note
 Database Credential is hard-coded at the start of the main.tf file, 
