@@ -30,6 +30,16 @@ terraform apply
 ```
 Optionaly, run ```terraform plan``` to verify execution plan.
 
+### Test
+With your Load Balancer address, use Postman to send Get and Post requests to your server.
+```
+// Example Get
+http://demo-alb-xxx.us-west-2.elb.amazonaws.com/count
+
+//Example Post
+http://demo-alb-xxx.us-west-2.elb.amazonaws.com/insert
+```
+
 ### Clean Up
 
 ```console
