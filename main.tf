@@ -286,7 +286,7 @@ data "template_file" "userdata" {
 resource "aws_launch_template" "demo_lt" {
   name_prefix   = "demo-lt-"
   image_id      = var.ami_id # Example Amazon Linux 2 in us-west-2. Update for your region
-  instance_type = "t3.micro"
+  instance_type = "t2.micro"
 
   user_data = base64encode(data.template_file.userdata.rendered)
 
