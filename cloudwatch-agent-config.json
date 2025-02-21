@@ -1,0 +1,41 @@
+{
+    "agent": {
+      "metrics_collection_interval": 60,
+      "run_as_user": "root"
+    },
+    "metrics": {
+      "namespace": "MyGoApp",
+      "metrics_collected": {
+        "cpu": {
+          "measurement": [
+            { "name": "cpu_usage_idle", "rename": "CPU_IDLE", "unit": "Percent" }
+          ],
+          "metrics_collection_interval": 60
+        },
+        "mem": {
+          "measurement": [
+            { "name": "mem_used_percent", "rename": "MEM_USED_PERCENT", "unit": "Percent" }
+          ]
+        }
+      }
+    },
+    "logs": {
+      "logs_collected": {
+        "files": {
+          "collect_list": [
+            {
+              "file_path": "/var/log/messages",
+              "log_group_name": "my-go-app-logs",
+              "log_stream_name": "{instance_id}-messages"
+            },
+            {
+              "file_path": "/home/ec2-user/go-server/demo-server.log",
+              "log_group_name": "my-go-app-logs",
+              "log_stream_name": "{instance_id}-demo-server"
+            }
+          ]
+        }
+      }
+    }
+  }
+  
