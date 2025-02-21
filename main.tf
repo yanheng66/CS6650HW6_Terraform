@@ -27,6 +27,12 @@ variable "ami_id" {
   type    = string
   default = "ami-08e4e35cccc6189f4"
 }
+
+# variable "db_dsn" {
+#   type        = string
+#   description = "DSN connection string for the MySQL database"
+# }
+
 ############
 # VPC & Subnet
 ############
@@ -104,7 +110,7 @@ resource "aws_security_group" "ec2_sg" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # For demo. In production, restrict to the ALB SG.
+    cidr_blocks = [aws_security_group.alb_sg.id] # Restrict to the ALB SG.
   }
 
   # Allow inbound SSH for debugging
@@ -112,6 +118,14 @@ resource "aws_security_group" "ec2_sg" {
     description = "SSH"
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow public traffic on 80 to reach ALB
+  ingress {
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -254,38 +268,19 @@ resource "aws_lb_listener" "demo_http_listener" {
 # 2. Clones a public repo with your demo Go app
 # 3. Builds and runs the server
 data "template_file" "userdata" {
-  #   template = <<-EOF
-  #     #!/bin/bash
-  #     yum update -y
-  #     yum install -y git
+  template = <<-EOF
+    #!/bin/bash
+    mkdir -p /etc/systemd/system/go-demo.service.d
+    cat <<EOT > /etc/systemd/system/go-demo.service.d/override.conf
+    [Service]
+    # Construct the DB_DSN string using Terraform references
+    # e.g. "myuser:mypass@tcp(mydb.xxxx.us-west-2.rds.amazonaws.com:3306)/mydemodb"
+    Environment="DB_DSN=${var.db_username}:${var.db_password}@tcp(${aws_db_instance.mysql_demo.address}:3306)/${aws_db_instance.mysql_demo.name}"
+    EOT
 
-  #     # Install Go (example version 1.20.x)
-  #     wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
-  #     tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
-  #     echo "export PATH=\$PATH:/usr/local/go/bin" >> /etc/profile
-  #     source /etc/profile
-
-  #     # optional: create a non-root user
-  #     # useradd -m demo
-  #     # su - demo
-
-  #     # Git clone your Go server
-  #     cd /root
-  #     git clone https://github.com/<YOUR-ORG>/<YOUR-GO-REPO>.git go-server
-  #     cd go-server
-
-  #     # set DB_DSN environment variable for MySQL
-  #     echo "export DB_DSN=\"${DB_DSN}\"" >> /etc/profile
-  #     source /etc/profile
-
-  #     # build and run (in background)
-  #     /usr/local/go/bin/go build -o demo-server main.go
-  #     nohup ./demo-server > /var/log/demo-server.log 2>&1 &
-  #     EOF
-
-  vars = {
-    DB_DSN = "${var.db_username}:${var.db_password}@tcp(${aws_db_instance.mysql_demo.address}:3306)/mydemodb"
-  }
+    systemctl daemon-reload
+    systemctl restart go-demo.service
+    EOF
 }
 
 resource "aws_launch_template" "demo_lt" {
