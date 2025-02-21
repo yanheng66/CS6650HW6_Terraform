@@ -57,8 +57,8 @@ build {
       "sudo yum update -y",
 
       # 2) Install Go
-      "curl -OL https://go.dev/dl/go1.20.5.linux-amd64.tar.gz",
-      "sudo tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz",
+      "curl -OL https://go.dev/dl/go1.24.0.linux-amd64.tar.gz",
+      "sudo tar -C /usr/local -xzf go1.24.0.linux-amd64.tar.gz",
       "echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee /etc/profile.d/go.sh",
       "sudo chmod 644 /etc/profile.d/go.sh",              # Ensure read permission
       "source /etc/profile.d/go.sh",                      # Now you can safely source it
