@@ -1,5 +1,7 @@
 # CS6650HW6_Terraform
 
+Link to Video Walkthrough: https://youtu.be/iHI988F-K5s
+
 ### Start
 Make sure you are in us-west-2 Oregon.
 Create a Cloud9 environment.
