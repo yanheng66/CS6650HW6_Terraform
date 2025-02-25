@@ -67,11 +67,11 @@ build {
       "sudo yum install -y git",
 
       # 4) Clone your Go server code
-      "git clone https://github.com/RuidiH/CS6650HW6_GO /home/ec2-user/go-server",
+      "git clone https://github.com/yanheng66/AlbumServerGo /home/ec2-user/go-server",
       "cd /home/ec2-user/go-server",
 
       # 5) Build the server
-      "/usr/local/go/bin/go build -o /home/ec2-user/go-server/CS6650HW6_GO main.go",
+      "/usr/local/go/bin/go build -o /home/ec2-user/go-server/AlbumServerGo main.go",
 
       # 6) Install CloudWatch agent
       "sudo yum install -y amazon-cloudwatch-agent"

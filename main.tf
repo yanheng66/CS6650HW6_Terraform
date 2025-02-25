@@ -339,3 +339,22 @@ output "db_endpoint" {
   description = "RDS endpoint"
   value       = aws_db_instance.mysql_demo.address
 }
+
+resource "null_resource" "init_mysql" {
+  provisioner "local-exec" {
+    command = <<EOT
+      mysql -h ${aws_db_instance.mysql_demo.address} -u ${var.db_username} -p${var.db_password} -D mydemodb -e "
+      CREATE TABLE IF NOT EXISTS albums (
+          album_id VARCHAR(255) PRIMARY KEY,
+          image_data LONGBLOB,
+          image_size INT NOT NULL,
+          artist VARCHAR(255) NOT NULL,
+          title VARCHAR(255) NOT NULL,
+          year VARCHAR(4) NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );"
+    EOT
+  }
+
+  depends_on = [aws_db_instance.mysql_demo]
+}
