@@ -97,7 +97,7 @@ build {
       "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json -m ec2",
 
       # 7) Create a Systemd service for the Go app to start on boot
-      "cat << 'EOF' | sudo tee /etc/systemd/system/go-demo.service\n[Unit]\nDescription=Go Demo Server\nAfter=network.target\n[Service]\nType=simple\nExecStart=/home/ec2-user/go-server/CS6650HW6_GO\nRestart=always\nUser=ec2-user\n[Install]\nWantedBy=multi-user.target\nEOF",
+      "cat << 'EOF' | sudo tee /etc/systemd/system/go-demo.service\n[Unit]\nDescription=Go Demo Server\nAfter=network.target\n[Service]\nType=simple\nExecStart=/home/ec2-user/go-server/AlbumServerGo\nRestart=always\nUser=ec2-user\n[Install]\nWantedBy=multi-user.target\nEOF",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable go-demo.service",
 
